@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springmodules.org/schema/ehcache
+						http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+	<!-- 配置ehcache缓存过期策略文件 -->						
+	<ehcache:config configLocation="classpath:ehcache.xml"/>
+	
+	<!-- 缓存代理 -->
+	<ehcache:proxy id="surveyServiceCacheProxy" refId="surveyService">
+	
+		<!-- 缓存数据的方法 -->
+		<ehcache:caching methodName="get*" cacheName="surveyCache"/>
+		<ehcache:caching methodName="load*" cacheName="surveyCache"/>
+		<ehcache:caching methodName="find*" cacheName="surveyCache"/>
+		<ehcache:caching methodName="is*" cacheName="surveyCache"/>
+		
+		<!-- 清除数据的方法 -->
+		<ehcache:flushing methodName="new*" cacheNames="surveyCache" />
+		<ehcache:flushing methodName="save*" cacheNames="surveyCache" />
+		<ehcache:flushing methodName="update*" cacheNames="surveyCache" />
+		<ehcache:flushing methodName="delete*" cacheNames="surveyCache" />
+		<ehcache:flushing methodName="batch*" cacheNames="surveyCache" />
+	</ehcache:proxy>	
+</beans>

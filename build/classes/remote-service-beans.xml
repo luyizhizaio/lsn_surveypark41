@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+						
+	<!-- 服务导出器,到处统计服务bean,形成远程调用 -->
+	<bean name="/ssRemote.service" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="serviceInterface">
+			<value>cn.itcast.surveypark.service.StatisticsService</value>
+		</property>
+		<property name="service" ref="statisticsService" />
+	</bean>
+</beans>

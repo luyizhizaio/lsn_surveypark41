@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project name="sp" basedir="." default="deploy">
+	
+	<property name="tomcat_home" value="D:\apache-tomcat-6.0.35" />
+	<property name="tomcat_cluster_home" location="D:\apache-tomcat-cluster"/>
+
+	<path id="libPath">
+		<fileset dir="${tomcat_home}/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${basedir}/WebContent/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="clear">
+		<delete dir="${basedir}/build/classes" />
+		<mkdir dir="${basedir}/build/classes"/>
+	</target>
+	
+	<target name="compile" depends="clear">
+		<javac srcdir="${basedir}/src"
+			destdir="${basedir}/build/classes">
+			<classpath refid="libPath" />
+		</javac>
+	</target>
+	
+	<target name="postCompile" depends="compile">
+		<copy todir="${basedir}/build/classes">
+			<fileset dir="${basedir}/conf">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${basedir}/build/classes/cn/itcast/surveypark/domain">
+			<fileset dir="${basedir}/src/cn/itcast/surveypark/domain">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${basedir}/build/classes/cn/itcast/surveypark/domain/security">
+			<fileset dir="${basedir}/src/cn/itcast/surveypark/domain/security">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="package" depends="postCompile">
+		<war destfile="${basedir}/ROOT.war"
+			webxml="${basedir}/WebContent/WEB-INF/web.xml"
+			basedir="${basedir}/WebContent"
+			>
+			<classes dir="${basedir}/build/classes" />
+		</war>
+	</target>
+	
+	<target name="prepareDeploy" depends="package">
+		<delete dir="${tomcat_cluster_home}/tomcat-A/work" />
+		<delete dir="${tomcat_cluster_home}/tomcat-B/work" />
+		<delete dir="${tomcat_cluster_home}/tomcat-C/work" />
+		
+		<delete dir="${tomcat_cluster_home}/tomcat-A/webapps/ROOT" />
+		<delete dir="${tomcat_cluster_home}/tomcat-B/webapps/ROOT" />
+		<delete dir="${tomcat_cluster_home}/tomcat-C/webapps/ROOT" />
+	</target>
+	
+	<target name="deploy" depends="prepareDeploy">
+		<copy file="${basedir}/ROOT.war" todir="${tomcat_cluster_home}/tomcat-A/webapps"/>
+		<copy file="${basedir}/ROOT.war" todir="${tomcat_cluster_home}/tomcat-B/webapps"/>
+		<copy file="${basedir}/ROOT.war" todir="${tomcat_cluster_home}/tomcat-C/webapps"/>
+	</target>
+</project>
